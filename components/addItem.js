@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import {DateTime} from 'luxon';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 const AddItem = ({addBill}) => {
@@ -35,6 +36,11 @@ const AddItem = ({addBill}) => {
       <TouchableOpacity
         style={styles.btn}
         onPress={() => {
+          setAddBill({
+            ...newBill,
+            created: DateTime.now(),
+            dueDate: DateTime.now().plus({days: newBill.due}),
+          });
           addBill(newBill);
           setAddBill({name: '', amount: '0', due: 0});
         }}>

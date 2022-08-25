@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {storeData, getData} from './utils/asyncstorage';
+import {storeData, getData, clearAllBills} from './utils/asyncstorage';
 import {v4 as uuid} from 'uuid';
 import {View, StyleSheet, Text, FlatList} from 'react-native';
 import Header from './components/header.js';
@@ -11,11 +11,9 @@ const App = () => {
   const [loaded, setLoaded] = useState(false);
 
   const deleteBill = async id => {
-    console.log('looking to delete ', id);
     setBills(prevItems => {
-      console.log('previtems before ', prevItems);
       prevItems = prevItems.filter(bill => bill.id !== id);
-      console.log('prev items after ', prevItems);
+
       return prevItems;
     });
   };
@@ -25,7 +23,6 @@ const App = () => {
     });
   };
   useEffect(() => {
-    console.log('store data use effect is running');
     async function StoreBills() {
       await storeData(bills);
     }
@@ -34,7 +31,6 @@ const App = () => {
     }
   }, [bills, loaded]);
   useEffect(() => {
-    console.log('fetch data use effect is running');
     async function FetchData() {
       setBills(await getData());
     }
@@ -47,7 +43,11 @@ const App = () => {
       <Header />
       <AddItem addBill={addBill} />
       <FlatList
-        data={bills.sort((a, b) => a.due - b.due)}
+        data={bills.sort(
+          (a, b) =>
+            a.dueDate.diff(a.created, 'days') -
+            b.dueDate.diff(b.created, 'days'),
+        )}
         renderItem={({item}) => (
           <ListItem bill={item} deleteBill={deleteBill} />
         )}

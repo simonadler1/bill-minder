@@ -17,3 +17,13 @@ export const getData = async () => {
     // error reading value
   }
 };
+
+export const clearAllBills = async () => {
+  try {
+    await AsyncStorage.removeItem('bills');
+  } catch (e) {
+    // remove error
+  }
+
+  console.log('Done.');
+};

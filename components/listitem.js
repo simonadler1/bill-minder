@@ -7,7 +7,8 @@ const ListItem = ({bill, deleteBill}) => {
     <TouchableOpacity style={styles.listitem}>
       <View style={styles.listItemView}>
         <Text style={styles.listItemText}>
-          {bill.name},{bill.amount},due in {bill.due} days
+          {bill.name},{bill.amount},due in{' '}
+          {bill.dueDate.diff(bill.created, 'days')} days
         </Text>
         <Icon
           name="remove"
