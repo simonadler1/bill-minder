@@ -8,38 +8,46 @@ import AddItem from './components/addItem';
 
 const App = () => {
   const [bills, setBills] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   const deleteBill = async id => {
-    setBills(prevBills => {
-      return prevBills.filter(bill => {
-        bill.id !== id;
-      });
+    console.log('looking to delete ', id);
+    setBills(prevItems => {
+      console.log('previtems before ', prevItems);
+      prevItems = prevItems.filter(bill => bill.id !== id);
+      console.log('prev items after ', prevItems);
+      return prevItems;
     });
   };
-  const addBill = async item => {
-    await setBills(prevBills => {
+  const addBill = item => {
+    setBills(prevBills => {
       return [...prevBills, {...item, id: uuid()}];
     });
   };
   useEffect(() => {
-    async function getDataAsync() {
-      setBills(await getData());
-    }
-    getDataAsync();
-  }, []);
-  useEffect(() => {
-    async function storeDataAsync() {
+    console.log('store data use effect is running');
+    async function StoreBills() {
       await storeData(bills);
     }
-    storeDataAsync();
-  }, [bills]);
+    if (loaded) {
+      StoreBills();
+    }
+  }, [bills, loaded]);
+  useEffect(() => {
+    console.log('fetch data use effect is running');
+    async function FetchData() {
+      setBills(await getData());
+    }
+    FetchData();
+    setLoaded(true);
+  }, []);
 
   return (
     <View style={styles.container}>
       <Header />
       <AddItem addBill={addBill} />
       <FlatList
-        data={bills}
+        data={bills.sort((a, b) => a.due - b.due)}
         renderItem={({item}) => (
           <ListItem bill={item} deleteBill={deleteBill} />
         )}
